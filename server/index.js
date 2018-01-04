@@ -32,7 +32,7 @@ function addMoreCorsHeaders(res) {
 app.get('/simple-request', (req, res) => {
     res = disableCaching(res)
 
-    //res = addCorsHeaders(res)
+    res = addCorsHeaders(res)
 
     res.sendStatus(200)
 })
@@ -55,4 +55,4 @@ app.put('/preflighted-request', (req, res) => {
 })
 
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'))
+app.listen(3000, () => console.log('Server listening on port 3000!'))
