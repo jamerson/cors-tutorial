@@ -1,0 +1,86 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="client-requester">
+  <template>
+    <style>
+      .invisible {
+        display: none
+      }
+    </style>
+    <iron-ajax
+      id="xhr"
+      method="[[method]]"
+      handle-as="json"
+      url="[[url]]"
+      content-type="[[contentType]]"
+      on-response="_handleResponse"
+      on-error="_handleError"></iron-ajax>
+    <h3>[[title]]</h3>
+    <div>
+      <span id="description">
+          <slot></slot>
+      </span>
+    </div>
+    <div>
+        <paper-button raised class="indigo" on-tap="performRequest">Send Request</paper-button>
+    </div>
+    <template is="dom-if" if="{{loading}}">
+      <paper-spinner id='spinner' active>...</paper-spinner>
+    </template>
+      <p id='result'></p>
+  </template>
+  <script>
+    class ClientRequester extends Polymer.Element {
+      static get is() { 
+        return 'client-requester' 
+      }
+      static get properties() {
+        return {
+          title: String,
+          url: String,
+          loading: {
+            type: Boolean,
+            value: false
+          },
+          method: String,
+          contentType: String
+        }
+      }
+
+      _handleResponse(e) {
+        //this.$.spinner.active = false
+        this.set('loading', false)
+        if(e.detail.status ===  200) {
+          this.$.result.innerText = 'The server returned a success response with all valid headers'
+        } else {
+          this.$.result.innerText = `Something went wrong, The server returned a success response but it wasn't  the expected HTTP status code 200. The returned status code was ${e.detail.status}`
+        }
+        console.info(e)
+      }
+
+      _handleError(e) {
+        //this.$.spinner.active = false
+        this.set('loading', false)
+        if(e.detail.request.status ===  0) {
+          this.$.result.innerText = "The server returned an error response that could not be retrieved by the app, you can confirm it looking for any error message on Developer Console. Probably the CORS headers aren't correctly implemented."
+        } else {
+          this.$.result.innerText = `Something went wrong, The server returned a error response with status code  ${e.detail.request.status}, are you sure the server is running?`
+        }
+        console.log(e)
+      }
+
+      performRequest() {
+        this.$.result.innerText = ''
+        //this.$.spinner.active = true
+        this.set('loading', true)
+        this.$.xhr.generateRequest()
+      }
+    }
+
+    window.customElements.define(ClientRequester.is, ClientRequester);
+  </script>
+</dom-module>

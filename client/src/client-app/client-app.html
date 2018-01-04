@@ -1,0 +1,38 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="client-requester.html">
+
+<dom-module id="client-app">
+  <template>
+    <style>
+    </style>
+    <div>
+      <client-requester 
+        title="Simple Request" 
+        method='get' 
+        content-type='text/plain'
+        url="http://localhost:3000/simple-request">
+        <p>This is a simple request, it doesnt use pre-flight requests</p>
+      </client-requester>
+    </div>
+    <div>
+      <client-requester 
+        title="Preflighted Request"
+        method='put' 
+        content-type='text/html'
+        url="http://localhost:3000/preflighted-request">
+        <p>This is a preflighted request. Before each request, an OPTION request is sent by the browser</p>
+      </client-requester>
+    </div>
+  </template>
+  <script>
+    class ClientApp extends Polymer.Element {
+      static get is() { return 'client-app'; }
+      static get properties() {
+        return {
+        }
+      }
+    }
+
+    window.customElements.define(ClientApp.is, ClientApp);
+  </script>
+</dom-module>

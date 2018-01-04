@@ -1,0 +1,7 @@
+{
+  "name": "client",
+  "short_name": "client",
+  "description": "CORS Demonstration",
+  "start_url": "/",
+  "display": "standalone"
+}
