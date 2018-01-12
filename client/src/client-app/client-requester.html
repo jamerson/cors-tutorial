@@ -2,7 +2,6 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <dom-module id="client-requester">
   <template>
@@ -55,7 +54,7 @@
         //this.$.spinner.active = false
         this.set('loading', false)
         if(e.detail.status ===  200) {
-          this.$.result.innerText = 'The server returned a success response with all valid headers'
+          this.$.result.innerText = 'The server returned a successful response with all valid headers'
         } else {
           this.$.result.innerText = `Something went wrong, The server returned a success response but it wasn't  the expected HTTP status code 200. The returned status code was ${e.detail.status}`
         }

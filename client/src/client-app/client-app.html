@@ -16,6 +16,15 @@
     </div>
     <div>
       <client-requester 
+        title="Preflighted GET Request"
+        method='get' 
+        content-type='text/html'
+        url="http://localhost:3000/simple-request">
+        <p>This is a preflighted GET request. Before each request, an OPTION request is sent by the browser</p>
+      </client-requester>
+    </div>
+    <div>
+      <client-requester 
         title="Preflighted Request"
         method='put' 
         content-type='text/html'

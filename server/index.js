@@ -37,10 +37,21 @@ app.get('/simple-request', (req, res) => {
     res.sendStatus(200)
 })
 
+app.options('/simple-request', (req, res) => {
+    res = disableCaching(res)
+
+    res = addCorsHeaders(res)
+    res.header('Access-Control-Allow-Headers', 'content-type')
+    //TODO: Put your code here
+
+    res.sendStatus(200)
+})
+
 app.options('/preflighted-request', (req, res) => {
     res = disableCaching(res)
 
     res = addMoreCorsHeaders(res)
+    //TODO: Put your code here
 
     res.sendStatus(200)
 })
@@ -50,6 +61,7 @@ app.put('/preflighted-request', (req, res) => {
     res = disableCaching(res)
 
     res = addMoreCorsHeaders(res)
+    //TODO: Put your code here
 
     res.sendStatus(200)
 })
