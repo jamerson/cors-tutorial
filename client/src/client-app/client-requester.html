@@ -9,6 +9,9 @@
       .invisible {
         display: none
       }
+      .system {
+        font-family: Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;
+      }
     </style>
     <iron-ajax
       id="xhr"
@@ -16,6 +19,7 @@
       handle-as="json"
       url="[[url]]"
       content-type="[[contentType]]"
+      on-request="_requestSent"
       on-response="_handleResponse"
       on-error="_handleError"></iron-ajax>
     <h3>[[title]]</h3>
@@ -30,7 +34,7 @@
     <template is="dom-if" if="{{loading}}">
       <paper-spinner id='spinner' active>...</paper-spinner>
     </template>
-      <p id='result'></p>
+      <p id='result' class='system'></p>
   </template>
   <script>
     class ClientRequester extends Polymer.Element {
@@ -50,13 +54,50 @@
         }
       }
 
+      _addResultLine() {
+        this._addResultContent('=========================')
+      }
+
+      _addResultContent(text) {
+        let div = document.createElement('div')
+        div.textContent = text
+        this.$.result.appendChild(div)
+      }
+
+      _snakeToCamel(text) {
+        let words = text.split('-')
+        let result = []
+        for(let i in words) {
+          let w = words[i]
+          let ccw = w.charAt(0).toUpperCase() + w.substring(1)
+          result.push(ccw)
+        }
+        return result.join(' ')
+      }
+
+      _requestSent(e) {
+        let opt = e.detail.options
+        let method = opt.method.toUpperCase()
+        let url = opt.url
+        let origin = e.currentTarget.baseURI
+        this._addResultLine()
+        this._addResultContent(`${method} ${url}`)
+        console.log(opt.headers['content-type'])
+        for (let header in opt.headers) {
+          this._addResultContent(`${this._snakeToCamel(header)}: ${opt.headers[header]}`)
+        }
+        this._addResultContent(`Origin: ${origin}`)
+      }
+
       _handleResponse(e) {
         //this.$.spinner.active = false
         this.set('loading', false)
+        this._addResultLine()
+        this._addResultContent(`HTTP ${e.detail.status}`)
         if(e.detail.status ===  200) {
-          this.$.result.innerText = 'The server returned a successful response with all valid headers'
+          this._addResultContent('The server returned a successful response with all valid headers')
         } else {
-          this.$.result.innerText = `Something went wrong, The server returned a success response but it wasn't  the expected HTTP status code 200. The returned status code was ${e.detail.status}`
+          this._addResultContent(`Something went wrong, The server returned a success response but it wasn't  the expected HTTP status code 200. The returned status code was ${e.detail.status}`)
         }
         console.info(e)
       }
@@ -64,10 +105,12 @@
       _handleError(e) {
         //this.$.spinner.active = false
         this.set('loading', false)
+        this._addResultLine()
+        this._addResultContent(`HTTP ${e.detail.status}`)
         if(e.detail.request.status ===  0) {
-          this.$.result.innerText = "The server returned an error response that could not be retrieved by the app, you can confirm it looking for any error message on Developer Console. Probably the CORS headers aren't correctly implemented."
+          this._addResultContent("The server returned an error response that could not be retrieved by the app, you can confirm it looking for any error message on Developer Console. Probably the CORS headers aren't correctly implemented.")
         } else {
-          this.$.result.innerText = `Something went wrong, The server returned a error response with status code  ${e.detail.request.status}, are you sure the server is running?`
+          this._addResultContent(`Something went wrong, The server returned a error response with status code  ${e.detail.request.status}, are you sure the server is running?`)
         }
         console.log(e)
       }
